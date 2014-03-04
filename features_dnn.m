@@ -4,8 +4,8 @@ function feat = features_dnn(imds)
 
 try
     
-pathToFeatures = '/projects/grail/unikitty/VOC2007/imagenet_features/';   % hardcoded path
-interval = 10;                                                          % hardcoded interval
+pathToFeatures = '/projects/grail/unikitty/VOC2007/imagenet_features/4/';   % hardcoded path
+interval = 4;                                                          % hardcoded interval
 
 % imds has 'im', 'flip', 'boxes' (if positive); see pascal_data.m
 alltoks = strtokAll(imds.im, '/');

@@ -22,11 +22,11 @@ imgsetdir_voc = [imgannodir '/ImageSets/voc/']; mymkdir(imgsetdir_voc);
 annosetdir = [imgannodir '/Annotations/']; mymkdir(annosetdir);
 
 basedir = ['/projects/grail/unikitty/objectNgrams/'];                 % main project folder (with the code, results, etc)
-resultsdir = fullfile(basedir, 'results', 'dpmWithDNN');
+resultsdir = fullfile(basedir, 'results', 'dpmWithDNN_cby1000_interval4_iterations100_components1_test');
 
 %%% global variables (need to put them here instead of voc_config.m)
 OVERWRITE = 1;                      % whether to overwrite compiled code or not
-dpm.numcomp = 6;                    % number of components for training DPM
+dpm.numcomp = 1;                    % number of components for training DPM
 dpm.wsup_fg_olap = 0.5;             % amount of foreground overlap (with ground-truth bbox)
 dpm.jointCacheLimit = 2*(3*2^30);   % amount of RAM for training DPM
 
@@ -57,6 +57,7 @@ for objind = OBJINDS            % run either all concepts or a selected concept
     
     disp('%%% TESTING (on voc data)');
     %compileCode_v2_depfun('pascal_test_sumpool_multi', 1, 'linuxUpdateSystemNumThreadsToMax.sh');
+    compileCode_v2_depfun('pascal_test_sumpool_multi_dnn', 1, 'linuxUpdateSystemNumThreadsToMax.sh');
     modelname = 'mix';
     if exist([cachedir '/' objname '_' modelname '.mat'], 'file') &&...
             ~exist([cachedir '/' objname '_boxes_' testdatatype '_' testyear '_' modelname '.mat'], 'file') % test _joint model on test set (cluster version)
@@ -64,8 +65,9 @@ for objind = OBJINDS            % run either all concepts or a selected concept
         num_ids = getNumImagesInDataset(cachedir, testyear, testdatatype, thisPOStag);
         if areAllFilesDone(resdir, num_ids, [], 1) ~= 0            
             %pascal_test_sumpool(cachedir, objname, testdatatype, testyear, testyear, modelname);                     % single machine version            
-            pascal_test_sumpool_multi(cachedir, objname, testdatatype, testyear, testyear, modelname, thisPOStag);      % cluster version
-            %numjobsDetTest = min(200, areAllFilesDone(resdir, num_ids, [], 1));
+            %pascal_test_sumpool_multi_dnn(cachedir, objname, testdatatype, testyear, testyear, modelname, thisPOStag);      % cluster version
+            numjobsDetTest = min(200, areAllFilesDone(resdir, num_ids, [], 1));
+multimachine_grail_compiled(['pascal_test_sumpool_multi_dnn ' cachedir ' ' objname ' ' testdatatype ' ' testyear ' ' testyear ' ' modelname ' ' thisPOStag], num_ids, resdir, numjobsDetTest, [],'notcuda.q', 8, 0, OVERWRITE, 0);
             %multimachine_grail_compiled(['pascal_test_sumpool_multi ' cachedir ' ' objname ' ' testdatatype ' ' testyear ' ' testyear ' ' modelname ' ' thisPOStag], num_ids, resdir, numjobsDetTest, [], 'all.q', 8, 0, OVERWRITE, 0);
             areAllFilesDone(resdir, num_ids);
         end

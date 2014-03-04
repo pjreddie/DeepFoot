@@ -5,6 +5,9 @@ try
     
 % hardcoded path
 pathToFeatures = '/projects/grail/unikitty/VOC2007/imagenet_features/';
+if model.interval == 4
+pathToFeatures = '/projects/grail/unikitty/VOC2007/imagenet_features/4/';
+end
 
 % imds has 'im', 'flip', 'boxes' (if positive); see pascal_data.m
 alltoks = strtokAll(imds.im, '/');
