@@ -46,12 +46,8 @@ for i=1:height      % set truncation dimension
         feat(i,j,ndim+1) = 0;
     end
 end
-[rows, cols, depth] = size(feat);
-scale = max2(feat)-min2(feat);
-scale = repmat(scale, rows, cols);
-scale = scale+.0000001*ones(size(scale));
-trans = repmat(min2(feat), rows, cols);
-feat = (feat-trans)./scale;
+  scale = 1000*ones(size(feat));
+  feat = feat./scale;
 
 fclose(fid);
 
@@ -77,12 +73,8 @@ for k=1:ndim
         end
     end
 end
-[rows, cols, depth] = size(feat);
-scale = max2(feat)-min2(feat);
-scale = repmat(scale, rows, cols);
-scale = scale+.0000001*ones(size(scale));
-trans = repmat(min2(feat), rows, cols);
-feat = (feat-trans)./scale;
+  scale = 1000*ones(size(feat));
+  feat = feat./scale;
 
 fclose(fid);
 %}
