@@ -84,6 +84,13 @@ td = model.features.truncation_dim;
 for i = 1:pyra.num_levels
   % add 1 to padding because feature generation deletes a 1-cell
   % wide border around the feature map
+  [rows, cols, depth] = size(pyra.feat{i});
+  scale = max2(pyra.feat{i})-min2(pyra.feat{i});
+  scale = repmat(scale, rows, cols);
+  scale = scale+.0000001*ones(size(scale));
+  trans = repmat(min2(pyra.feat{i}), rows, cols);
+  pyra.feat{i} = (pyra.feat{i}-trans)./scale;
+  %pyra.feat{i} = (pyra.feat{i} - min2(pyra.feat{i}))/(max2(pyra.feat{i}) - min2(pyra.feat{i}));
   pyra.feat{i} = padarray(pyra.feat{i}, [pady+1 padx+1 0], 0);
   % write boundary occlusion feature
   pyra.feat{i}(1:pady+1, :, td) = 1;
