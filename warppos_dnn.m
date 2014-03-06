@@ -61,12 +61,12 @@ parfor i = 1:numpos
 	%fprintf('XB1: %f\n', scale*pos(i).x1/model.sbin);
 
     %feat = features_dnn(pos(i));
-	xb1 = round(scale*pos(i).x1/model.sbin)+pyra.padx;
+	xb1 = ceil(scale*pos(i).x1/model.sbin)+pyra.padx;
         if xb1 <= pyra.padx;
 		xb1 = xb1+1;
 	end
 	xb2 = xb1 + fsize(2)-1;
-	yb1 = round(scale*pos(i).y1/model.sbin)+pyra.pady;
+	yb1 = ceil(scale*pos(i).y1/model.sbin)+pyra.pady;
 	if yb1 <= pyra.pady;
 		yb1 = yb1+1;
 	end
