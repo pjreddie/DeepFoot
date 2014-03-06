@@ -30,18 +30,18 @@ parfor i = 1:numpos
         procid(), model.class, i, numpos)
     padx = model.sbin *  widths(i) /pixels(2);
     pady = model.sbin * heights(i) /pixels(1);
-    x1 = round(pos(i).x1);
-    x2 = round(pos(i).x2);
-    y1 = round(pos(i).y1);
-    y2 = round(pos(i).y2);
+    x1 = pos(i).x1;
+    x2 = pos(i).x2;
+    y1 = pos(i).y1;
+    y2 = pos(i).y2;
     %window = subarray(im, y1, y2, x1, x2, 1);
     %im = imresize(window, cropsize, 'bilinear');
     %warped{i} = features(double(im), model.sbin);
         
-	scaley = cropsize(1)/(y2-y1);
-	scalex = cropsize(2)/(x2-x1);
-	%fprintf('%f, %f\n', scaley, scalex);
-	maxscale = max(scaley, scalex);
+    scaley = cropsize(1)/(y2-y1);
+    scalex = cropsize(2)/(x2-x1);
+    %fprintf('%f, %f\n', scaley, scalex);
+    maxscale = max(scaley, scalex);
     
     pyra = featpyramid_dnn(pos(i), model);
 	index = 1
@@ -61,9 +61,15 @@ parfor i = 1:numpos
 	%fprintf('XB1: %f\n', scale*pos(i).x1/model.sbin);
 
     %feat = features_dnn(pos(i));
-	xb1 = ceil(scale*pos(i).x1/model.sbin)+pyra.padx;
+	xb1 = round(scale*pos(i).x1/model.sbin)+pyra.padx;
+        if xb1 <= pyra.padx;
+		xb1 = xb1+1;
+	end
 	xb2 = xb1 + fsize(2)-1;
-	yb1 = ceil(scale*pos(i).y1/model.sbin + pyra.pady);
+	yb1 = round(scale*pos(i).y1/model.sbin)+pyra.pady;
+	if yb1 <= pyra.pady;
+		yb1 = yb1+1;
+	end
 	yb2 = yb1 + fsize(1)-1;
 	%fprintf('%d,%d to %d,%d out of %d x %d\n', xb1,yb1,xb2,yb2,size(feat,2), size(feat,1));
 	%fprintf('%d,%d to %d,%d out of %d x %d\n', pos(i).x1, pos(i).y1, pos(i).x2, pos(i).y2, size(im, 2), size(im,1));
