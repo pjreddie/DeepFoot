@@ -75,6 +75,7 @@ parfor i = 1:numpos
 	%fprintf('%d,%d to %d,%d out of %d x %d\n', pos(i).x1, pos(i).y1, pos(i).x2, pos(i).y2, size(im, 2), size(im,1));
 	%fprintf('%d,%d\n', size(feat,1), size(feat,2));
 	warped{i} = feat(yb1:yb2,xb1:xb2,:);
+	warped{i}(:,:,257) = 0 .* warped{i}(:,:,257);
 	%fprintf('warped: %d %d\n', size(warped{i},1), size(warped{i},2));
 end
 
