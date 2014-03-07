@@ -123,10 +123,40 @@ if doparts
     % Train a mixture model with 2x resolution parts using latent positives and hard negatives    
     disp('Doing parts');
     try        
-        load([cachedir cls '_parts'], 'models'); models;        
+        load([cachedir cls '_parts'], 'model'); model;        
     catch
         seed_rand();
-        disp(' To be completed...');    
+        
+        % Add parts to each mixture component
+        for i = 1:n
+            % Top-level rule for this component
+            ruleind = i;
+            % Top-level rule for this component's mirror image
+            partner = [];
+            % Filter to interoplate parts from
+            filterind = i;                        
+            model = model_add_parts(model, model.start, ruleind, ...
+                partner, filterind, 8, [6 6], 1);
+            % Enable learning location/scale prior
+            bl = model.rules{model.start}(i).loc.blocklabel;
+            model.blocks(bl).w(:)     = 0;
+            model.blocks(bl).learn    = 1;
+            model.blocks(bl).reg_mult = 1;
+        end
+        
+        % Train using several rounds of positive latent relabeling
+        % and data mining on the small set of negative images
+        model = train_dnn(model, impos, neg_small, false, false, 8, 10, ...
+            max_num_examples, fg_overlap, num_fp, false, 'parts_1');
+        % Finish training by data mining on all of the negative images
+        model = train_dnn(model, impos, neg_large, false, false, 1, 5, ...
+            max_num_examples, fg_overlap, num_fp, true, 'parts_2');
+        save([cachedir cls '_parts'], 'model');
+        
+        [inds_parts, posscores_parts, lbbox_parts] = poslatent_getinds_dnn(model, pos, fg_overlap, 0);
+        save([cachedir cls '_parts'], 'inds_parts', 'posscores_parts', 'lbbox_parts', '-append');        
+        
+        displayExamplesPerSubcat4(cls, cachedir, year, conf.training.train_set_fg);
     end
 end
 
