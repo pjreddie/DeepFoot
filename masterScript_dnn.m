@@ -22,7 +22,7 @@ imgsetdir_voc = [imgannodir '/ImageSets/voc/']; mymkdir(imgsetdir_voc);
 annosetdir = [imgannodir '/Annotations/']; mymkdir(annosetdir);
 
 basedir = ['/projects/grail/unikitty/objectNgrams/'];                 % main project folder (with the code, results, etc)
-resultsdir = fullfile(basedir, 'results', 'dpmWithDNN_constantnormalized_nozero_round_plusonebackoff');
+resultsdir = fullfile(basedir, 'results', 'dpmWithDNN_constantnormalized_nozero_ceil_plusonebackoff_2c');
 
 %%% global variables (need to put them here instead of voc_config.m)
 OVERWRITE = 1;                      % whether to overwrite compiled code or not

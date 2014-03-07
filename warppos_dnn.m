@@ -62,13 +62,13 @@ parfor i = 1:numpos
 
     %feat = features_dnn(pos(i));
 	featsize = size(feat);
-	xb1 = round(scale*pos(i).x1/model.sbin)+pyra.padx+1;
+	xb1 = ceil(scale*pos(i).x1/model.sbin)+pyra.padx+1;
 	xb2 = xb1 + fsize(2)-1;
 	if xb2 > featsize(2)-pyra.padx;
 		xb1 = xb1 - 1;
 		xb2 = xb2 - 1;
 	end
-	yb1 = round(scale*pos(i).y1/model.sbin)+pyra.pady+1;
+	yb1 = ceil(scale*pos(i).y1/model.sbin)+pyra.pady+1;
 	yb2 = yb1 + fsize(1)-1;
 	if yb2 > featsize(1)-pyra.pady;
 		yb1 = yb1 - 1;
