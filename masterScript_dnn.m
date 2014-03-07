@@ -22,11 +22,11 @@ imgsetdir_voc = [imgannodir '/ImageSets/voc/']; mymkdir(imgsetdir_voc);
 annosetdir = [imgannodir '/Annotations/']; mymkdir(annosetdir);
 
 basedir = ['/projects/grail/unikitty/objectNgrams/'];                 % main project folder (with the code, results, etc)
-resultsdir = fullfile(basedir, 'results', 'dpmWithDNN_standard_000125c');
+resultsdir = fullfile(basedir, 'results', 'dpmWithDNN_standard_00025c_5comp');
 
 %%% global variables (need to put them here instead of voc_config.m)
 OVERWRITE = 1;                      % whether to overwrite compiled code or not
-dpm.numcomp = 6;                    % number of components for training DPM
+dpm.numcomp = 5;                    % number of components for training DPM
 dpm.wsup_fg_olap = 0.5;             % amount of foreground overlap (with ground-truth bbox)
 dpm.jointCacheLimit = 2*(3*2^30);   % amount of RAM for training DPM
 
