@@ -9,7 +9,7 @@ function warped = warppos_dnn(model, pos)
 %
 % Arguments
 %   model   Root filter only model
-%   pos     Positive examples from pascal_data.m
+%   pos	 Positive examples from pascal_data.m
 
 try
 
@@ -20,30 +20,27 @@ heights =[pos(:).y2]' - [pos(:).y1]' + 1;
 widths = [pos(:).x2]' - [pos(:).x1]' + 1;
 numpos = length(pos);
 warped = cell(numpos, 1);
-%cropsize = (fsize+2) * model.sbin; %+2 is needed if doing operations on
+cropsize = (fsize+2) * model.sbin; %+2 is needed if doing operations on
 %images and then calling features(); if directly indexing into extracted
 %features, then not needed
-cropsize = fsize * model.sbin;
+%cropsize = fsize * model.sbin;
 
 parfor i = 1:numpos
-    fprintf('%s %s: warp: %d/%d\n', ...
-        procid(), model.class, i, numpos)
-    padx = model.sbin *  widths(i) /pixels(2);
-    pady = model.sbin * heights(i) /pixels(1);
-    x1 = pos(i).x1;
-    x2 = pos(i).x2;
-    y1 = pos(i).y1;
-    y2 = pos(i).y2;
-    %window = subarray(im, y1, y2, x1, x2, 1);
-    %im = imresize(window, cropsize, 'bilinear');
-    %warped{i} = features(double(im), model.sbin);
-        
-    scaley = cropsize(1)/(y2-y1);
-    scalex = cropsize(2)/(x2-x1);
-    %fprintf('%f, %f\n', scaley, scalex);
-    maxscale = max(scaley, scalex);
-    
-    pyra = featpyramid_dnn(pos(i), model);
+	fprintf('%s %s: warp: %d/%d\n', ...
+		procid(), model.class, i, numpos)
+	x1 = pos(i).x1;
+	x2 = pos(i).x2;
+	y1 = pos(i).y1;
+	y2 = pos(i).y2;
+		
+	scaley = cropsize(1)/(y2-y1);
+	scalex = cropsize(2)/(x2-x1);
+
+	maxscale = max(scaley, scalex);
+	
+	pyra = featpyramid_dnn(pos(i), model);
+	orig_size = size(pyra.feat{1});
+	orig_size = ([orig_size(1) orig_size(2)]- 2 .* [pyra.pady pyra.padx]) .* 4;
 	index = 1
 	for j = 1:size(pyra.scales,1)
 		if pyra.scales(j) >= maxscale
@@ -52,36 +49,26 @@ parfor i = 1:numpos
 	end
 	feat = pyra.feat{index};
 	scale = pyra.scales(index);
-	%fprintf('%s Index: %d, Scale: %f, Target %f\n', pos(i).im, index, pyra.scales(index), maxscale);
-    %fprintf('JOE!!!: %d/%d\n', ...
-    %size(feat, 1), size(feat,2));
-    %fprintf('%d %d\n', fsize(1), fsize(2));
-    %fprintf('box: %d,%d\n', pos(i).x2-pos(i).x1, pos(i).y2-pos(i).y1);
-	%fprintf('%f %d %d\n', minscale, pos(i).x2-pos(i).x1, pos(i).y2-pos(i).y1);
-	%fprintf('XB1: %f\n', scale*pos(i).x1/model.sbin);
+	padding = [pyra.pady+1 pyra.padx+1];
 
-    %feat = features_dnn(pos(i));
+	orig_center = [(y1+y2)/2 (x1+x2)/2]
 	featsize = size(feat);
-	xb1 = ceil(scale*pos(i).x1/model.sbin)+pyra.padx+1;
-	xb2 = xb1 + fsize(2)-1;
-	if xb2 > featsize(2)-pyra.padx;
-		xb1 = xb1 - 1;
-		xb2 = xb2 - 1;
-	end
-	yb1 = ceil(scale*pos(i).y1/model.sbin)+pyra.pady+1;
-	yb2 = yb1 + fsize(1)-1;
-	if yb2 > featsize(1)-pyra.pady;
-		yb1 = yb1 - 1;
-		yb2 = yb2 - 1;
-	end
-	%fprintf('%d,%d to %d,%d out of %d x %d\n', xb1,yb1,xb2,yb2,size(feat,2), size(feat,1));
-	%fprintf('%d,%d to %d,%d out of %d x %d\n', pos(i).x1, pos(i).y1, pos(i).x2, pos(i).y2, size(im, 2), size(im,1));
-	%fprintf('%d,%d\n', size(feat,1), size(feat,2));
-	warped{i} = feat(yb1:yb2,xb1:xb2,:);
+	nopadsize = [featsize(1) featsize(2)]-2 .* padding;
+
+	feat_center = orig_center .* nopadsize./orig_size;
+	top_left = round(feat_center - fsize./2)+padding;
+	top_left = max(top_left, padding);
+	bot_right = top_left + fsize - [1 1];
+	bot_right = min(bot_right, nopadsize+padding);
+	top_left = bot_right - fsize + [1 1];
+	
+	warped{i} = feat(top_left(1):bot_right(1),top_left(2):bot_right(2),:);
 	warped{i}(:,:,257) = 0 .* warped{i}(:,:,257);
-	%fprintf('warped: %d %d\n', size(warped{i},1), size(warped{i},2));
+	if size(warped{i}(:,:,1)) > size(nonzeros(warped{i}(:,:,1)));
+		disp('**************BAD BAD BAD BAD BAD BAD********************');
+	end
 end
 
 catch
-    disp(lasterr); keyboard;
+	disp(lasterr); keyboard;
 end

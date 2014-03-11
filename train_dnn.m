@@ -679,7 +679,7 @@ parfor i = 1:numneg
     tic_toc_print('%s %s: iter %d: random negatives: %d/%d\n', ...
         procid(), model.class, t, i, numneg);    
     %feat_hog = features(double(imreadx(neg(i))), model.sbin);
-    feats{i} = features_dnn(neg(i));    
+    feats{i} = features_dnn(neg(i)); 
 end
 
 for i = 1:numneg

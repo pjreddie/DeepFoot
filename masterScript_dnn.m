@@ -22,7 +22,7 @@ imgsetdir_voc = [imgannodir '/ImageSets/voc/']; mymkdir(imgsetdir_voc);
 annosetdir = [imgannodir '/Annotations/']; mymkdir(annosetdir);
 
 basedir = ['/projects/grail/unikitty/objectNgrams/'];                 % main project folder (with the code, results, etc)
-resultsdir = fullfile(basedir, 'results', 'dpmWithDNN_standard_00025c_parts');
+resultsdir = fullfile(basedir, 'results', 'dpmWithDNN_newpad_00025c');
 
 %%% global variables (need to put them here instead of voc_config.m)
 OVERWRITE = 1;                      % whether to overwrite compiled code or not
@@ -46,8 +46,8 @@ for objind = OBJINDS            % run either all concepts or a selected concept
     
     disp('%%% DPM TRAINING');    
     %compileCode_v2_depfun('pascal_train_wsup3', 1);
-    doparts = 1;
-    modelname = 'parts';
+    doparts = 0;
+    modelname = 'mix';
     cachedir = [ngramModeldir_obj '/']; mymkdir(cachedir);
     if ~exist([cachedir '/' objname '_' modelname '.mat'], 'file')
         pascal_train_dnn(objname, dpm.numcomp, 'blah', cachedir, trainyear, dpm.wsup_fg_olap, doparts);
@@ -59,7 +59,6 @@ for objind = OBJINDS            % run either all concepts or a selected concept
     disp('%%% TESTING (on voc data)');
     %compileCode_v2_depfun('pascal_test_sumpool_multi', 1, 'linuxUpdateSystemNumThreadsToMax.sh');
     compileCode_v2_depfun('pascal_test_sumpool_multi_dnn', 1, 'linuxUpdateSystemNumThreadsToMax.sh');
-    modelname = 'parts';
     if exist([cachedir '/' objname '_' modelname '.mat'], 'file') &&...
             ~exist([cachedir '/' objname '_boxes_' testdatatype '_' testyear '_' modelname '.mat'], 'file') % test _joint model on test set (cluster version)
         resdir = [cachedir '/testFiles_' testyear '/'];
