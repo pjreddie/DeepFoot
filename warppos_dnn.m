@@ -42,9 +42,9 @@ parfor i = 1:numpos
 	orig_size = size(pyra.feat{1});
 	orig_size = ([orig_size(1) orig_size(2)]- 2 .* [pyra.pady pyra.padx]) .* 4;
 	index = 1
-	for j = 1:size(pyra.scales,1)
+	for j = 1:size(pyra.scales,1)-1
 		if pyra.scales(j) >= maxscale
-			index = j
+			index = j+1
 		end
 	end
 	feat = pyra.feat{index};
@@ -56,7 +56,7 @@ parfor i = 1:numpos
 	nopadsize = [featsize(1) featsize(2)]-2 .* padding;
 
 	feat_center = orig_center .* nopadsize./orig_size;
-	top_left = round(feat_center - fsize./2)+padding;
+	top_left = round(feat_center - (fsize - [1 1])./2)+padding;
 	top_left = max(top_left, padding);
 	bot_right = top_left + fsize - [1 1];
 	bot_right = min(bot_right, nopadsize+padding);
