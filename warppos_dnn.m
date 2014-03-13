@@ -28,45 +28,39 @@ cropsize = (fsize+2) * model.sbin; %+2 is needed if doing operations on
 parfor i = 1:numpos
 	fprintf('%s %s: warp: %d/%d\n', ...
 		procid(), model.class, i, numpos)
+    height = fsize(1);
+    width = fsize(2);
+    ndim = 257;
 	x1 = pos(i).x1;
 	x2 = pos(i).x2;
 	y1 = pos(i).y1;
 	y2 = pos(i).y2;
 		
-	scaley = cropsize(1)/(y2-y1);
-	scalex = cropsize(2)/(x2-x1);
+    im = imreadx(pos(i));
+    window = subarray(im, y1, y2, x1, x2, 1);
 
-	maxscale = max(scaley, scalex);
+    alltoks = strtokAll(pos(i).im, '/');
+
+    filename = sprintf('/tmp/%d%s', i, alltoks{end});
+    imwrite(window, filename);
+    command = sprintf('bash --login -c "./jnet/cnn %s %d %d 2>/dev/null"', filename, fsize(1), fsize(2));
+    [status res] = system(command);
+    feat_tmp = textscan(res, '%f', height*width*(ndim-1), 'delimiter', ',');
+
+    feat = zeros(height, width, ndim, 'single');  % +1 is for truncation dim
+    cnt = 1;
+    for k=1:ndim-1
+        for ii=1:height
+            for j=1:width
+                feat(ii,j,k) = single(feat_tmp{1}(cnt));
+                cnt = cnt + 1;
+            end
+        end
+    end
+    scale = 1000*ones(size(feat));
+    feat = feat./scale;
 	
-	pyra = featpyramid_dnn(pos(i), model);
-	orig_size = size(pyra.feat{1});
-	orig_size = ([orig_size(1) orig_size(2)]- 2 .* [pyra.pady pyra.padx]) .* 4;
-	index = 1
-	for j = 1:size(pyra.scales,1)-1
-		if pyra.scales(j) >= maxscale
-			index = j+1
-		end
-	end
-	feat = pyra.feat{index};
-	scale = pyra.scales(index);
-	padding = [pyra.pady+1 pyra.padx+1];
-
-	orig_center = [(y1+y2)/2 (x1+x2)/2]
-	featsize = size(feat);
-	nopadsize = [featsize(1) featsize(2)]-2 .* padding;
-
-	feat_center = orig_center .* nopadsize./orig_size;
-	top_left = round(feat_center - (fsize - [1 1])./2)+padding;
-	top_left = max(top_left, padding);
-	bot_right = top_left + fsize - [1 1];
-	bot_right = min(bot_right, nopadsize+padding);
-	top_left = bot_right - fsize + [1 1];
-	
-	warped{i} = feat(top_left(1):bot_right(1),top_left(2):bot_right(2),:);
-	warped{i}(:,:,257) = 0 .* warped{i}(:,:,257);
-	if size(warped{i}(:,:,1)) > size(nonzeros(warped{i}(:,:,1)));
-		disp('**************BAD BAD BAD BAD BAD BAD********************');
-	end
+	warped{i} = feat;
 end
 
 catch
