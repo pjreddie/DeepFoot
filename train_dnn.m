@@ -198,7 +198,7 @@ for t = 1:iter
                 if tneg > 1 && complete
                     cache_val = cache(tneg-1,4);
                     full_val = cache(tneg-1,4)-cache(tneg-1,1) + neg_loss(tneg);
-                    if full_val/cache_val < 1.05
+                    if full_val/cache_val < 1.005
                         datamine = false;
                     end
                 end
