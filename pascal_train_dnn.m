@@ -80,13 +80,13 @@ catch
 end
 myprintfn;
 
-
+%{
 %%% debugging code
 [mimg_lrs1, mlab_lrs1] = getMontagesForModel_latent_wsup(inds_lrsplit1, inds_lrsplit1, ...
     inds_lrsplit1, posscores_lrsplit1, posscores_lrsplit1, lbbox_lrsplit1, pos, [], n);
 mimg = montage_list_w_text(mimg_lrs1, mlab_lrs1, 2, '', [0 0 0], [2000 2000 3]);
 imwrite(mimg, [cachedir '/display/montage_lrsplit1c.jpg']);
-
+%}
 
 % Train a mixture model composed of all subcategories 
 % using latent positives and hard negatives
@@ -111,13 +111,13 @@ catch
 end
 myprintfn;
     
-
+%{
 %%% debugging code
 [mimg_lrs1, mlab_lrs1] = getMontagesForModel_latent_wsup(inds_mix, inds_mix, ...
     inds_mix, posscores_mix, posscores_mix, lbbox_mix, pos, [], n);
 mimg = montage_list_w_text(mimg_lrs1, mlab_lrs1, 2, '', [0 0 0], [2000 2000 3]);
 imwrite(mimg, [cachedir '/display/montage_mix.jpg']);
-
+%}
 
 if doparts
     % Train a mixture model with 2x resolution parts using latent positives and hard negatives    

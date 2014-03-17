@@ -22,7 +22,7 @@ imgsetdir_voc = [imgannodir '/ImageSets/voc/']; mymkdir(imgsetdir_voc);
 annosetdir = [imgannodir '/Annotations/']; mymkdir(annosetdir);
 
 basedir = ['/projects/grail/unikitty/objectNgrams/'];                 % main project folder (with the code, results, etc)
-resultsdir = fullfile(basedir, 'results', 'dpmWithDNN_contextwarp');
+resultsdir = fullfile(basedir, 'results', 'dpmWithDNN_contextwarp_parts');
 
 %%% global variables (need to put them here instead of voc_config.m)
 OVERWRITE = 1;                      % whether to overwrite compiled code or not
@@ -46,8 +46,8 @@ for objind = OBJINDS            % run either all concepts or a selected concept
     
     disp('%%% DPM TRAINING');    
     %compileCode_v2_depfun('pascal_train_wsup3', 1);
-    doparts = 0;
-    modelname = 'mix';
+    doparts = 1;
+    modelname = 'parts';
     cachedir = [ngramModeldir_obj '/']; mymkdir(cachedir);
     if ~exist([cachedir '/' objname '_' modelname '.mat'], 'file')
         pascal_train_dnn(objname, dpm.numcomp, 'blah', cachedir, trainyear, dpm.wsup_fg_olap, doparts);

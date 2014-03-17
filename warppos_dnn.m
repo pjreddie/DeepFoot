@@ -25,12 +25,17 @@ cropsize = (fsize+2) * model.sbin; %+2 is needed if doing operations on
 %features, then not needed
 %cropsize = fsize * model.sbin;
 
+conf = voc_config_dnn();
+% SD: this part of code moved out of the for loop as it need not be in the for loop
+height = fsize(1);
+width = fsize(2);
+%ndim = 257;    % SD: avoid hardcoding numbers, instead use globally set values
+ndim = conf.features.dim;
+
 parfor i = 1:numpos
 	fprintf('%s %s: warp: %d/%d\n', ...
 		procid(), model.class, i, numpos)
-	height = fsize(1);
-	width = fsize(2);
-	ndim = 257;
+	
 	padx = model.sbin * widths(i) /pixels(2);
 	pady = model.sbin * heights(i) /pixels(1);
 	x1 = round(pos(i).x1-padx);
