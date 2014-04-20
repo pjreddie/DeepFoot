@@ -8,6 +8,9 @@ pathToFeatures = '/projects/grail/unikitty/VOC2007/imagenet_features/';
 if model.interval == 4
 pathToFeatures = '/projects/grail/unikitty/VOC2007/imagenet_features/4/';
 end
+if model.interval == 10
+pathToFeatures = '/projects/grail/unikitty/VOC2007/imagenet_features/10/';
+end
 
 % imds has 'im', 'flip', 'boxes' (if positive); see pascal_data.m
 alltoks = strtokAll(imds.im, '/');
@@ -61,7 +64,6 @@ sc = 2^(1/interval);
 im = double(imreadx(imds));
 imsize = [size(im, 1) size(im, 2)];
 max_scale = 1 + floor(log(min(imsize)/(5*sbin))/log(sc));
-%pyra.unpadded = cell(max_scale + interval, 1);
 pyra.feat = cell(max_scale + interval, 1);
 pyra.scales = zeros(max_scale + interval, 1);
 pyra.imsize = imsize;
@@ -92,9 +94,8 @@ for i = 1:pyra.num_levels
  %scale = scale+.0000001*ones(size(scale));
  %trans = repmat(min2(pyra.feat{i}), rows, cols);
   %pyra.feat{i} = (pyra.feat{i}-trans)./scale;
-  scale = 1000*ones(size(pyra.feat{i}));
-  pyra.feat{i} = pyra.feat{i}./scale;
-  %pyra.unpadded{i} = pyra.feat{i};
+  %scale = 1000*ones(size(pyra.feat{i}));
+  %pyra.feat{i} = (pyra.feat{i})./scale;
   pyra.feat{i} = padarray(pyra.feat{i}, [pady+1 padx+1 0], 0);
   % write boundary occlusion feature
   pyra.feat{i}(1:pady+1, :, td) = 1;

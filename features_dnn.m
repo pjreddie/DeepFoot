@@ -46,8 +46,8 @@ for i=1:height      % set truncation dimension
         feat(i,j,ndim+1) = 0;
     end
 end
-  scale = 1000*ones(size(feat));
-  feat = feat./scale;
+  %scale = 1000*ones(size(feat));
+  %feat = (feat)./scale;
 
 fclose(fid);
 
@@ -73,8 +73,8 @@ for k=1:ndim
         end
     end
 end
-  scale = 1000*ones(size(feat));
-  feat = feat./scale;
+  %scale = 1000*ones(size(feat));
+  %feat = (feat)./scale;
 
 fclose(fid);
 %}
