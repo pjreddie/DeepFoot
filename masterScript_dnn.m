@@ -22,7 +22,7 @@ imgsetdir_voc = [imgannodir '/ImageSets/voc/']; mymkdir(imgsetdir_voc);
 annosetdir = [imgannodir '/Annotations/']; mymkdir(annosetdir);
 
 basedir = ['/projects/grail/unikitty/objectNgrams/'];                 % main project folder (with the code, results, etc)
-resultsdir = fullfile(basedir, 'results', 'dpmWithDNN_betterfeat');
+resultsdir = fullfile(basedir, 'results', 'dpmWithDNN_betterfeat_001c');
 
 %%% global variables (need to put them here instead of voc_config.m)
 OVERWRITE = 1;                      % whether to overwrite compiled code or not
@@ -67,7 +67,7 @@ for objind = OBJINDS            % run either all concepts or a selected concept
             %pascal_test_sumpool(cachedir, objname, testdatatype, testyear, testyear, modelname);                     % single machine version            
             %pascal_test_sumpool_multi_dnn(cachedir, objname, testdatatype, testyear, testyear, modelname, thisPOStag);      % cluster version
             numjobsDetTest = min(200, areAllFilesDone(resdir, num_ids, [], 1));
-multimachine_grail_compiled(['pascal_test_sumpool_multi_dnn ' cachedir ' ' objname ' ' testdatatype ' ' testyear ' ' testyear ' ' modelname ' ' thisPOStag], num_ids, resdir, numjobsDetTest, [],'cuda.q', 1, 0, OVERWRITE, 0);
+multimachine_grail_compiled(['pascal_test_sumpool_multi_dnn ' cachedir ' ' objname ' ' testdatatype ' ' testyear ' ' testyear ' ' modelname ' ' thisPOStag], num_ids, resdir, numjobsDetTest, [],'notcuda.q', 1, 0, OVERWRITE, 0);
             %multimachine_grail_compiled(['pascal_test_sumpool_multi ' cachedir ' ' objname ' ' testdatatype ' ' testyear ' ' testyear ' ' modelname ' ' thisPOStag], num_ids, resdir, numjobsDetTest, [], 'all.q', 8, 0, OVERWRITE, 0);
             areAllFilesDone(resdir, num_ids);
         end

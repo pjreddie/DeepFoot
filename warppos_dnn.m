@@ -64,8 +64,8 @@ parfor i = 1:numpos
 			end
 		end
 	end
-	%scale = 1000*ones(size(feat));
-	%feat = feat./scale;
+	scale = 70.0*ones(size(feat));
+	feat = feat./scale;
 	
 	warped{i} = feat;
 end
