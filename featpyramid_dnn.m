@@ -88,7 +88,7 @@ for i = 1:pyra.num_levels
   % add 1 to padding because feature generation deletes a 1-cell
   % wide border around the feature map
 
-  scale = 70.0*ones(size(pyra.feat{i}));
+  scale = 40.0*ones(size(pyra.feat{i}));
   pyra.feat{i} = (pyra.feat{i})./scale;
   pyra.feat{i} = padarray(pyra.feat{i}, [pady+1 padx+1 0], 0);
   % write boundary occlusion feature
