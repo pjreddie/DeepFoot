@@ -16,7 +16,6 @@ global VOC_CONFIG_OVERRIDE;
 VOC_CONFIG_OVERRIDE.paths.model_dir = cachedir;
 VOC_CONFIG_OVERRIDE.pascal.year = year;
 VOC_CONFIG_OVERRIDE.training.fg_overlap = fg_olap; %0.25;
-VOC_CONFIG_OVERRIDE.training.train_set_fg = 'train';
 diary([cachedir '/diaryoutput_train.txt']);
 disp(['pascal_train_dnn(''' cls ''',' num2str(n) ',''' note ''',''' cachedir ''',''' year ''',' num2str(fg_olap) ','  num2str(doparts) ')' ]);
 
@@ -96,7 +95,7 @@ try
 catch
   seed_rand();  
   model = model_merge(models);      % Combine separate mixture models into one mixture model
-  model = train_dnn(model, impos, neg_small, false, false, 1, 100, ...
+  model = train_dnn(model, impos, neg_large, false, false, 100, 100, ...
       max_num_examples, fg_overlap, num_fp, false, 'mix_1');
   model_mix1 = model;
   %model = train_wsup(model, impos, neg_large, false, false, 1, 15, ...

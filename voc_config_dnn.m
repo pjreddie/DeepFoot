@@ -159,7 +159,7 @@ exists_or_mkdir(conf.paths.model_dir);
 % Training configuration 
 % -------------------------------------------------------------------
 conf = cv(conf, 'training.train_set_fg', 'trainval');
-conf = cv(conf, 'training.train_set_bg', 'train');
+conf = cv(conf, 'training.train_set_bg', 'trainval');
 
 conf = cv(conf, 'training.C', 0.001);
 conf = cv(conf, 'training.bias_feature', 10);
@@ -169,7 +169,7 @@ conf = cv(conf, 'training.cache_byte_limit', 6*2^30);
 conf.training.log = @(x) sprintf([conf.paths.model_dir '%s.log'], x);
 
 conf = cv(conf, 'training.cache_example_limit', 24000);
-conf = cv(conf, 'training.num_negatives_small', 2000);
+conf = cv(conf, 'training.num_negatives_small', 200);
 conf = cv(conf, 'training.num_negatives_large', 2000);
 conf = cv(conf, 'training.wlssvm_M', 0);
 conf = cv(conf, 'training.fg_overlap', 0.7);
