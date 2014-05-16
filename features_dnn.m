@@ -18,12 +18,13 @@ end
 
 fid = fopen(fname, 'r');
 
-fcnt = 1;
-while fcnt ~= interval+1    % ignore first "interval" lines as they all correspond to 2X resolution
-    fgetl(fid); % ignore header
-    fgetl(fid); % ignore data
-    fcnt = fcnt + 1;
-end
+%fcnt = 1;
+%
+%while fcnt ~= interval+1    % ignore first "interval" lines as they all correspond to 2X resolution
+%    fgetl(fid); % ignore header
+%    fgetl(fid); % ignore data
+%    fcnt = fcnt + 1;
+%end
 
 A = textscan(fid, '%f %f %f\n', 1, 'delimiter', ',');
 ndim = A{1}; height = A{2}; width = A{3};
@@ -48,6 +49,8 @@ for i=1:height      % set truncation dimension
 end
   scale = 40.0*ones(size(feat));
   feat = (feat)./scale;
+  %one = ones(size(feat));
+  %feat = min(feat, one);
 
 fclose(fid);
 
@@ -75,6 +78,8 @@ for k=1:ndim
 end
   scale = 40.0*ones(size(feat));
   feat = (feat)./scale;
+  %one = ones(size(feat));
+  %feat = min(feat, one);
 
 fclose(fid);
 %}

@@ -89,7 +89,11 @@ for i = 1:pyra.num_levels
   % wide border around the feature map
 
   scale = 40.0*ones(size(pyra.feat{i}));
+
   pyra.feat{i} = (pyra.feat{i})./scale;
+  %one = ones(size(pyra.feat{i}));
+  %pyra.feat{i} = min(pyra.feat{i}, one);
+
   pyra.feat{i} = padarray(pyra.feat{i}, [pady+1 padx+1 0], 0);
   % write boundary occlusion feature
   pyra.feat{i}(1:pady+1, :, td) = 1;

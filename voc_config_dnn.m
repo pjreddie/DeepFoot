@@ -161,7 +161,7 @@ exists_or_mkdir(conf.paths.model_dir);
 conf = cv(conf, 'training.train_set_fg', 'trainval');
 conf = cv(conf, 'training.train_set_bg', 'trainval');
 
-conf = cv(conf, 'training.C', 0.0001);
+conf = cv(conf, 'training.C', 0.001);
 conf = cv(conf, 'training.bias_feature', 10);
 % File size limit for the feature vector cache (2^30 bytes = 1GB)
 conf = cv(conf, 'training.cache_byte_limit', 6*2^30);
@@ -176,7 +176,7 @@ conf = cv(conf, 'training.fg_overlap', 0.7);
 
 conf = cv(conf, 'training.lbfgs.options.verbose', 2);
 conf = cv(conf, 'training.lbfgs.options.maxIter', 3000);
-conf = cv(conf, 'training.lbfgs.options.optTol', 0.0000001);  
+conf = cv(conf, 'training.lbfgs.options.optTol', 0.000001);  
 
 
 
