@@ -48,7 +48,6 @@ mymkdir([cachedir '/intermediateModels/']);
 max_num_examples = conf.training.cache_example_limit;
 num_fp           = conf.training.wlssvm_M;
 fg_overlap       = conf.training.fg_overlap;
-C           = conf.training.C;
 
 % Select a small, random subset of negative images
 % All data mining iterations use this subset, except in a final
@@ -69,7 +68,7 @@ catch
     for i = 1:n
         disp(['*******Training lrsplit1 model ' num2str(i) ' ********']);
         models{i} = root_model_dnn(cls, spos{i}, note);                
-        models{i} = train_dnn(models{i}, spos{i}, neg_small, true, true, 1, 1, ...
+        models{i} = train_dnn(models{i}, spos{i}, neg_large, true, true, 1, 1, ...
             max_num_examples, fg_overlap, 0, false, ...
             ['lrsplit1_' num2str(i)]);
     end
@@ -97,7 +96,7 @@ catch
   seed_rand();  
   model = model_merge(models);      % Combine separate mixture models into one mixture model
   model = train_dnn(model, impos, neg_small, false, false, 10, 100, ...
-      max_num_examples, fg_overlap, num_fp, false, 'mix_0', C*10);
+      max_num_examples, fg_overlap, num_fp, false, 'mix_0');
   model = train_dnn(model, impos, neg_large, false, false, 100, 20, ...
       max_num_examples, fg_overlap, num_fp, false, 'mix_1');
   model_mix1 = model;
@@ -113,13 +112,6 @@ catch
 end
 myprintfn;
 
-model = train_dnn(model, impos, neg_large, false, false, 1, 100, ...
-    max_num_examples, fg_overlap, num_fp, false, 'tuned');
-
-model_tuned = model;
-save([cachedir cls '_tuned'], 'model', 'model_tuned');
-[inds_tuned, posscores_tuned, lbbox_tuned] = poslatent_getinds_dnn(model, pos, fg_overlap, 0);
-save([cachedir cls '_tuned'], 'inds_tuned', 'posscores_tuned', 'lbbox_tuned', '-append');
 
 %{
 	%%% debugging code
